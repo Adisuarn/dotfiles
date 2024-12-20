@@ -47,8 +47,6 @@ $(fmt_key "Available Commands:")
     unlink                    Manage stow symlinks
         all                   Unlink all
         <pkg>                 Ulnlink a specific package
-    legacy                    Manage legacy symlink configuration
-        clean                 Clean up legacy symlinks
 EOF
 
   echo -e "\nExternal commands:"
@@ -160,56 +158,6 @@ cmd_unlink() {
   cmd_stow "unlink" "-D" "$@"
 }
 
-cmd_legacy() {
-  local subcmd=""
-  while [[ $# -gt 0 ]]; do
-    case "$1" in
-    -h | --help)
-      cat <<EOF
-Usage: $command_name legacy [options] <command>
-
-Options:
-    -h, --help       Show this help message
-    clean            Clean up broken legacy symlinks
-EOF
-      exit 0
-      ;;
-    *)
-      subcmd="$1"
-      shift
-      ;;
-    esac
-  done
-
-  case "$subcmd" in
-  clean)
-    links=(
-      ".zshrc" ".zshenv" ".zprofile" ".zsh_aliases"
-      ".zsh_functions" ".zsh_prompt" ".config/aerospace"
-      ".config/git" ".config/karabiner" ".config/kitty"
-      ".config/lazygit" ".config/nvim" ".config/ripgrep"
-      ".config/tmux" ".config/wezterm" ".config/zsh"
-    )
-
-    log_info "Cleaning up broken legacy symlinks..."
-
-    for link in "${links[@]}"; do
-      path_link="$HOME/$link"
-      if [ -L "$path_link" ] && [ ! -e "$path_link" ]; then
-        log_warning "Removing Broken symbolic link: $path_link"
-        rm "$path_link"
-      else
-        log_info "Link to $path_link not found. Skipping..."
-      fi
-    done
-    ;;
-  *)
-    log_error "Unknown legacy command: $cmd"
-    exit 1
-    ;;
-  esac
-}
-
 main() {
   if [ $# -lt 1 ]; then
     usage
@@ -227,8 +175,6 @@ main() {
   "unlink")
     cmd_unlink "$subcmd"
     ;;
-  "legacy")
-    cmd_legacy "$subcmd"
   *)
     if command -v "dot-$cmd" >/dev/null 2>&1; then
       "dot-$cmd" "$@"

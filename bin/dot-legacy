@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+# Description: Handle legacy dotfiles paths, links, and commmands.
+
+set -Eeuo pipefail
+
+# source helpers
+source "$DOTFILES/bin/lib/common.sh"
+command_name=$(basename "${BASH_SOURCE[0]}")
+
+usage() {
+  cat <<EOF
+  $(fmt_key "Usage:") $(fmt_key "$command_name") $(fmt_value "[options] <command>")
+
+Options:
+    -h, --help       Show this help message
+    clean            Clean up broken legacy symlinks
+EOF
+}
+
+main() {
+  local subcmd=""
+
+  if [ $# -lt 1 ]; then
+    usage
+    exit 0
+  fi
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      subcmd="$1"
+      shift
+      ;;
+    esac
+  done
+
+  if [ -z "$subcmd" ]; then
+    log_error "Missing legacy command"
+    echo -e ""
+    usage
+    exit 1
+  fi
+
+  case "$subcmd" in
+  clean)
+    links=(
+      ".zshrc" ".zshenv" ".zprofile" ".zsh_aliases"
+      ".zsh_functions" ".zsh_prompt" ".config/aerospace"
+      ".config/git" ".config/karabiner" ".config/kitty"
+      ".config/lazygit" ".config/nvim" ".config/ripgrep"
+      ".config/tmux" ".config/wezterm" ".config/zsh"
+    )
+
+    log_info "Cleaning up broken legacy symlinks..."
+
+    for link in "${links[@]}"; do
+      path_link="$HOME/$link"
+      if [ -L "$path_link" ] && [ ! -e "$path_link" ]; then
+        log_warning "Removing Broken symbolic link: $path_link"
+        rm "$path_link"
+      else
+        log_info "Link to $path_link not found. Skipping..."
+      fi
+    done
+    ;;
+  *)
+    log_error "Unknown legacy command: $cmd"
+    usage
+    exit 1
+    ;;
+  esac
+}
+
+setup_colors
+main "$@"
