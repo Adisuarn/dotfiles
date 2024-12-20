@@ -22,15 +22,25 @@ else
   exit 1
 fi
 
+find_commands() {
+  IFS=: read -ra path_dirs <<<"$PATH"
+  for dir in "${path_dirs[@]}"; do
+    # skip if the directory doesn't exist or isn't readable
+    [[ ! -d "$dir" ]] && continue
+    for cmd in "$dir"/dot-*; do
+      [[ -f "$cmd" && -x "$cmd" ]] || continue
+      basename "$cmd" | sed 's/^dot-//'
+    done
+  done | sort -u
 }
 
 usage() {
   cat <<EOF
-Usage: $command_name <command> [subcommand] [options]
+  $(fmt_key "Usage:") $(fmt_cmd "$command_name") $(fmt_value "<command> [subcommand] [options]")
 
 Dotfiles management script.
 
-Commands:
+$(fmt_key "Available Commands:")
     link                      Manage stow symlinks
         all                   Link all
         <pkg>                 Link a specific package
@@ -40,7 +50,14 @@ Commands:
     legacy                    Manage legacy symlink configuration
         clean                 Clean up legacy symlinks
 EOF
-  exit
+
+  echo -e "\nExternal commands:"
+
+  find_commands | while read -r cmd; do
+    # Get the description from the script if available
+    description=$(grep "^# Description:" "$(which "dot-$cmd")" 2>/dev/null | cut -d: -f2- | sed 's/^[[:space:]]*//' || echo "No description available")
+    printf "    $(fmt_cmd "%-12s") %s\n" "$cmd" "$description"
+  done
 }
 
 cmd_stow() {
@@ -196,6 +213,7 @@ EOF
 main() {
   if [ $# -lt 1 ]; then
     usage
+    exit 0
   fi
 
   cmd="$1"
@@ -211,6 +229,14 @@ main() {
     ;;
   "legacy")
     cmd_legacy "$subcmd"
+  *)
+    if command -v "dot-$cmd" >/dev/null 2>&1; then
+      "dot-$cmd" "$@"
+    else
+      log_error "Unknown command: $cmd"
+      usage
+      exit 1
+    fi
     ;;
   esac
 }
