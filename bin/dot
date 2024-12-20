@@ -41,6 +41,7 @@ usage() {
 Dotfiles management script.
 
 $(fmt_key "Available Commands:")
+    help                      Show this help message
     link                      Manage stow symlinks
         all                   Link all
         <pkg>                 Link a specific package
@@ -169,10 +170,13 @@ main() {
   subcmd="${1:-all}"
 
   case "$cmd" in
-  "link")
+  help)
+    usage
+    ;;
+  link)
     cmd_link "$subcmd"
     ;;
-  "unlink")
+  unlink)
     cmd_unlink "$subcmd"
     ;;
   *)
@@ -187,5 +191,4 @@ main() {
   esac
 }
 
-setup_colors
 main "$@"

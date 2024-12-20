@@ -76,5 +76,4 @@ main() {
   esac
 }
 
-setup_colors
 main "$@"

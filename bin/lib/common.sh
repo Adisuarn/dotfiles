@@ -1,61 +1,70 @@
 #!/usr/bin/env bash
 
-# Color setup
 setup_colors() {
-  if [[ -t 2 ]] && [[ -z "${NO_COLOR-}" ]] && [[ "${TERM-}" != "dumb" ]]; then
-    # Basic colors
-    readonly RESET="\033[0m"
-    readonly BOLD="\033[1m"
-    readonly DIM="\033[2m"
-    readonly BLUE="\033[34m"
-    readonly GREEN="\033[32m"
-    readonly YELLOW="\033[33m"
-    readonly RED="\033[31m"
-    readonly CYAN="\033[36m"
-    readonly MAGENTA="\033[35m"
-    readonly BLACK="\033[30m"
-    readonly BRIGHT_BLACK="\033[90m"
-    readonly BRIGHT_BLUE="\033[94m"
-    readonly BRIGHT_GREEN="\033[92m"
-    readonly BRIGHT_YELLOW="\033[93m"
-    readonly BRIGHT_RED="\033[91m"
-    readonly BRIGHT_CYAN="\033[96m"
-    readonly BRIGHT_MAGENTA="\033[95m"
-    readonly INFO_ICON="ℹ"
-    readonly SUCCESS_ICON="✔"
-    readonly WARNING_ICON="⚠"
-    readonly ERROR_ICON="✖"
-    readonly BG_BLACK="\033[40m"
-    readonly BG_BLUE="\033[44m"
-    readonly BG_BRIGHT_BLUE="\033[104m"
-    readonly BG_MAGENTA="\033[45m"
-    readonly BG_BRIGHT_MAGENTA="\033[105m"
-    readonly BG_GREEN="\033[42m"
-    readonly BG_BRIGHT_GREEN="\033[102m"
-    readonly BG_CYAN="\033[46m"
-    readonly BG_BRIGHT_CYAN="\033[106m"
-    readonly UNDERLINE="\033[4m"
-  else
-    readonly RESET="" BOLD="" DIM=""
-    readonly BLUE="" GREEN="" YELLOW="" RED="" CYAN="" MAGENTA=""
-    readonly BRIGHT_BLUE="" BRIGHT_GREEN="" BRIGHT_YELLOW="" BRIGHT_RED="" BRIGHT_CYAN="" BRIGHT_MAGENTA=""
-    readonly INFO_ICON=""
-    readonly SUCCESS_ICON=""
-    readonly WARNING_ICON=""
-    readonly ERROR_ICON=""
-    readonly BLACK=""
-    readonly BRIGHT_BLACK=""
-    readonly BG_BLACK=""
-    readonly BG_BLUE=""
-    readonly BG_BRIGHT_BLUE=""
-    readonly BG_MAGENTA=""
-    readonly BG_BRIGHT_MAGENTA=""
-    readonly BG_GREEN=""
-    readonly BG_BRIGHT_GREEN=""
-    readonly BG_CYAN=""
-    readonly BG_BRIGHT_CYAN=""
-    readonly UNDERLINE=""
+  # Check if function has already run
+  if [[ -n "${SETUP_COLORS_COMPLETE:-}" ]]; then
+    return 0
   fi
+
+  # Check if colors should be enabled
+  local use_colors=true
+  if [[ ! -t 2 ]] || [[ -n "${NO_COLOR-}" ]] || [[ "${TERM-}" == "dumb" ]]; then
+    use_colors=false
+  fi
+
+  # Function to set a readonly variable with conditional value
+  set_color() {
+    local var_name=$1
+    local color_value=$2
+    if [[ "$use_colors" == true ]]; then
+      readonly "$var_name=$color_value"
+    else
+      readonly "$var_name="
+    fi
+  }
+
+  # Basic formatting
+  set_color RESET "\033[0m"
+  set_color BOLD "\033[1m"
+  set_color DIM "\033[2m"
+  set_color UNDERLINE "\033[4m"
+
+  # Standard colors
+  set_color BLUE "\033[34m"
+  set_color GREEN "\033[32m"
+  set_color YELLOW "\033[33m"
+  set_color RED "\033[31m"
+  set_color CYAN "\033[36m"
+  set_color MAGENTA "\033[35m"
+  set_color BLACK "\033[30m"
+
+  # Bright colors
+  set_color BRIGHT_BLACK "\033[90m"
+  set_color BRIGHT_BLUE "\033[94m"
+  set_color BRIGHT_GREEN "\033[92m"
+  set_color BRIGHT_YELLOW "\033[93m"
+  set_color BRIGHT_RED "\033[91m"
+  set_color BRIGHT_CYAN "\033[96m"
+  set_color BRIGHT_MAGENTA "\033[95m"
+
+  # Background colors
+  set_color BG_BLACK "\033[40m"
+  set_color BG_BLUE "\033[44m"
+  set_color BG_BRIGHT_BLUE "\033[104m"
+  set_color BG_MAGENTA "\033[45m"
+  set_color BG_BRIGHT_MAGENTA "\033[105m"
+  set_color BG_GREEN "\033[42m"
+  set_color BG_BRIGHT_GREEN "\033[102m"
+  set_color BG_CYAN "\033[46m"
+  set_color BG_BRIGHT_CYAN "\033[106m"
+
+  # Icons
+  set_color INFO_ICON "ℹ"
+  set_color SUCCESS_ICON "✔"
+  set_color WARNING_ICON "⚠"
+  set_color ERROR_ICON "✖"
+
+  SETUP_COLORS_COMPLETE=1
 }
 
 # Enhanced logging functions with icons and colored text
@@ -78,3 +87,5 @@ fmt_title_border() {
   printf "${BRIGHT_BLUE}${BOLD}│ %s │${RESET}\n" "$text"
   printf "${BRIGHT_BLUE}${BOLD}└─%s─┘${RESET}\n" "$(printf '─%.0s' $(seq "$len"))"
 }
+
+setup_colors
