@@ -55,7 +55,7 @@ main() {
       ".config/tmux" ".config/wezterm" ".config/zsh"
     )
 
-    log_info "Cleaning up broken legacy symlinks..."
+    fmt_title_underline "Cleaning up broken legacy symlinks..."
 
     for link in "${links[@]}"; do
       path_link="$HOME/$link"
@@ -68,7 +68,8 @@ main() {
     done
     ;;
   *)
-    log_error "Unknown legacy command: $cmd"
+    log_error "Unknown legacy command: $subcmd"
+    echo -e
     usage
     exit 1
     ;;
