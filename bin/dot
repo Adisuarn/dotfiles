@@ -15,41 +15,13 @@ STOW_DIR="$DOTFILES"
 # Directories to ignore when linking
 IGNORE_LIST=("bin" "applescripts" "resources")
 
-setup_colors() {
-  # Color definitions
-  if [[ -t 2 ]] && [[ -z "${NO_COLOR-}" ]] && [[ "${TERM-}" != "dumb" ]]; then
-    readonly RESET="\033[0m"
-    readonly BOLD="\033[1m"
-    readonly DIM="\033[2m"
-    readonly BLUE="\033[34m"
-    readonly GREEN="\033[32m"
-    readonly YELLOW="\033[33m"
-    readonly RED="\033[31m"
-  else
-    readonly RESET=""
-    readonly BOLD=""
-    readonly DIM=""
-    readonly BLUE=""
-    readonly GREEN=""
-    readonly YELLOW=""
-    readonly RED=""
-  fi
-}
+if [[ -f "$DOTFILES/bin/lib/common.sh" ]]; then
+  source "$DOTFILES/bin/lib/common.sh"
+else
+  echo "Error: Unable to source common.sh"
+  exit 1
+fi
 
-log_info() {
-  printf "${BLUE}${BOLD}INFO${RESET} %s\n" "$1"
-}
-
-log_success() {
-  printf "${GREEN}${BOLD}SUCCESS${RESET} %s\n" "$1"
-}
-
-log_warning() {
-  printf "${YELLOW}${BOLD}WARNING${RESET} %s\n" "$1"
-}
-
-log_error() {
-  printf "${RED}${BOLD}ERROR${RESET} %s\n" "$1" >&2
 }
 
 usage() {
