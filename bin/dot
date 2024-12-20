@@ -41,13 +41,15 @@ usage() {
 Dotfiles management script.
 
 $(fmt_key "Available Commands:")
-    help                      Show this help message
-    link                      Manage stow symlinks
-        all                   Link all
-        <pkg>                 Link a specific package
-    unlink                    Manage stow symlinks
-        all                   Unlink all
-        <pkg>                 Ulnlink a specific package
+    help                          Show this help message
+    backup                        Backup dotfiles
+        -d, --directory <dir>   Backup directory (default: ~/dotfiles-backup)
+    link                          Manage stow symlinks
+        all                       Link all
+        <pkg>                     Link a specific package
+    unlink                        Manage stow symlinks
+        all                       Unlink all
+        <pkg>                     Unlink a specific package
 EOF
 
   echo -e "\nExternal commands:"
@@ -57,6 +59,94 @@ EOF
     description=$(grep "^# Description:" "$(which "dot-$cmd")" 2>/dev/null | cut -d: -f2- | sed 's/^[[:space:]]*//' || echo "No description available")
     printf "    $(fmt_cmd "%-12s") %s\n" "$cmd" "$description"
   done
+}
+
+cmd_backup() {
+  local backup_dir="$HOME/dotfiles-backup"
+  local verbose=false
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+    -d | --directory)
+      if [[ -n "${2:-}" ]]; then
+        backup_dir="$2"
+        shift 2
+      else
+        log_error "Missing backup directory"
+        exit 1
+      fi
+      ;;
+    -v | --verbose)
+      verbose=true
+      shift
+      ;;
+    *)
+      log_error "Unknown argument: $1"
+      exit 1
+      ;;
+    esac
+  done
+
+  # Expand ~ in backup_dir
+  backup_dir="${backup_dir/#\~/$HOME}"
+
+  local timestamp=$(date +%Y%m%d_%H%M%S)
+  local backup_path="${backup_dir}/dotfiles_backup_${timestamp}"
+
+  if [[ ! -d "$backup_path" ]]; then
+    mkdir -p "$backup_path" || {
+      log_error "Failed to create backup directory: $backup_path"
+      exit 1
+    }
+  fi
+
+  log_info "Creating backup in: $backup_path"
+
+  files_to_backup=(
+    ".zshrc"
+    ".zshenv"
+    ".zprofile"
+    ".zsh_aliases"
+    ".zsh_functions"
+    ".zsh_prompt"
+    ".config/aerospace"
+    ".config/git"
+    ".config/ghostty"
+    ".config/karabiner"
+    ".config/kitty"
+    ".config/lazygit"
+    ".config/nvim"
+    ".config/ripgrep"
+    ".config/tmux"
+    ".config/wezterm"
+    ".config/zsh"
+  )
+
+  for src in "${files_to_backup[@]}"; do
+    src_path="${HOME}/${src}"
+    if [[ -e "$src_path" ]]; then
+      local dest="${backup_path}/${src}"
+      mkdir -p "$(dirname "$dest")"
+
+      if [[ -d "$src_path" ]]; then
+        cp -R "$src_path" "$(dirname "$dest")" || {
+          log_warning "Failed to copy directory $src_path"
+          continue
+        }
+        [[ "$verbose" == true ]] && log_info "Copied directory: $src_path"
+      else
+        cp "$src_path" "$dest" || {
+          log_warning "Failed to copy file $src_path"
+          continue
+        }
+        [[ "$verbose" == true ]] && log_info "Copied file: $src_path"
+      fi
+    else
+      log_warning "File not found: $src_path"
+    fi
+  done
+
+  log_success "Backup created successfully at $backup_path"
 }
 
 cmd_stow() {
@@ -172,6 +262,9 @@ main() {
   case "$cmd" in
   help)
     usage
+    ;;
+  backup)
+    cmd_backup "$@"
     ;;
   link)
     cmd_link "$subcmd"
