@@ -93,13 +93,6 @@ cmd_backup() {
   local timestamp=$(date +%Y%m%d_%H%M%S)
   local backup_path="${backup_dir}/dotfiles_backup_${timestamp}"
 
-  if [[ ! -d "$backup_path" ]]; then
-    mkdir -p "$backup_path" || {
-      log_error "Failed to create backup directory: $backup_path"
-      exit 1
-    }
-  fi
-
   log_info "Creating backup in: $backup_path"
 
   files_to_backup=(
@@ -122,31 +115,39 @@ cmd_backup() {
     ".config/zsh"
   )
 
-  for src in "${files_to_backup[@]}"; do
-    src_path="${HOME}/${src}"
-    if [[ -e "$src_path" ]]; then
-      local dest="${backup_path}/${src}"
-      mkdir -p "$(dirname "$dest")"
+  tmpfile=$(mktemp)
+  trap 'rm -f "$tmpfile"' EXIT
 
-      if [[ -d "$src_path" ]]; then
-        cp -R "$src_path" "$(dirname "$dest")" || {
-          log_warning "Failed to copy directory $src_path"
-          continue
-        }
-        [[ "$verbose" == true ]] && log_info "Copied directory: $src_path"
-      else
-        cp "$src_path" "$dest" || {
-          log_warning "Failed to copy file $src_path"
-          continue
-        }
-        [[ "$verbose" == true ]] && log_info "Copied file: $src_path"
-      fi
+  for file in "${files_to_backup[@]}"; do
+    src_path="${HOME}/${file}"
+    if [[ -L "$src_path" ]]; then
+      [[ "$verbose" == true ]] && log_info "Skipping symlink: $file"
+      continue
+    elif [[ -e "$src_path" ]]; then
+      echo "$file" >>"$tmpfile"
+      [[ "$verbose" == true ]] && log_info "Found: $file"
     else
       log_warning "File not found: $src_path"
     fi
   done
 
-  log_success "Backup created successfully at $backup_path"
+  if [[ -s "$tmpfile" ]]; then
+    tar -czf "${backup_path}.tar.gz" -C "$HOME" -T "$tmpfile" || {
+      log_error "Failed to create backup archive"
+      exit 1
+    }
+
+    if [[ "$verbose" == true ]]; then
+      log_info "Archive contents:"
+      tar -tvf "${backup_path}.tar.gz" | while read -r line; do
+        log_info "$line"
+      done
+    fi
+
+    log_success "Backup created successfully"
+  else
+    log_warning "No files to backup"
+  fi
 }
 
 cmd_stow() {
