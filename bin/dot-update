@@ -16,14 +16,36 @@ usage() {
 
 Options:
     -h, --help       Show this help message
+    -v, --verbose    Show verbose output
     nvim             Update Neovim plugins
     vim              Alias for updating Neovim plugins
+    homebrew         Update Homebrew packages
+    brew             Update Homebrew packages
+    all              Update everything
 EOF
 }
 
-update_nvim_plugins() {
+update_homebrew() {
+  fmt_title_underline "Updating Homebrew packages"
   local log_file=$(mktemp)
+  trap 'rm -f "$log_file"' EXIT
 
+  run_with_spinner "brew update > '$log_file' 2>&1 && brew upgrade > '$log_file' 2>&1" 11 "Updating Homebrew"
+
+  if grep -q "Error\|fatal\|Failed" "$log_file"; then
+    log_error "Error occurred during update:"
+    [[ "$verbose" == true ]] && cat "$log_file"
+    exit 1
+  fi
+
+  grep -A1 "=>" "$log_file" | grep -v "^--$" || log_info "No updates found"
+  echo -e
+}
+
+update_nvim_plugins() {
+  fmt_title_underline "Updating Neovim plugins"
+
+  local log_file=$(mktemp)
   trap 'rm -f "$log_file"' EXIT
 
   # Use run_with_spinner helper with style 11 (complex braille pattern)
@@ -37,10 +59,12 @@ update_nvim_plugins() {
   fi
 
   grep -i "updated\|installed\|removed" "$log_file" || log_info "No updates found"
+  echo -e
 }
 
 main() {
   local subcmd=""
+  local verbose=false
 
   if [ $# -lt 1 ]; then
     usage
@@ -53,6 +77,10 @@ main() {
       usage
       exit 0
       ;;
+    -v | --verbose)
+      verbose=true
+      shift
+      ;;
     *)
       subcmd="$1"
       shift
@@ -63,6 +91,13 @@ main() {
   case "$subcmd" in
   nvim | vim)
     update_nvim_plugins
+    ;;
+  homebrew | brew)
+    update_homebrew
+    ;;
+  all)
+    update_nvim_plugins
+    update_homebrew
     ;;
   *)
     log_error "Unknown $command_name command: $subcmd"

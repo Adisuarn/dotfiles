@@ -164,8 +164,7 @@ run_with_spinner() {
   local exit_status=$?
 
   # clear the spinner from the line
-  echo -en "\r "
-  echo -e
+  echo -en "\r\033[K"
 
   if [ "$show_exit" -eq 1 ]; then
     if [ $exit_status -eq 0 ]; then
