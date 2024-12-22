@@ -148,9 +148,10 @@ spinner() {
 
 # Example of how to use in a real script
 run_with_spinner() {
-  local cmd="$1"   # Command to run
-  local style="$2" # Spinner style
-  local msg="$3"   # Custom message
+  local cmd="$1"            # Command to run
+  local style="$2"          # Spinner style
+  local msg="$3"            # Custom message
+  local show_exit="${4:-0}" # Verbose mode
 
   # Run the command in background
   eval "$cmd" &
@@ -162,11 +163,16 @@ run_with_spinner() {
   wait $!
   local exit_status=$?
 
+  # clear the spinner from the line
   echo -en "\r "
-  if [ $exit_status -eq 0 ]; then
-    echo -e "\n${GREEN}Success!${RESET}"
-  else
-    echo -e "\n${RED}Failed!${RESET}"
+  echo -e
+
+  if [ "$show_exit" -eq 1 ]; then
+    if [ $exit_status -eq 0 ]; then
+      log_success "Success!"
+    else
+      log_error "Failed!"
+    fi
   fi
 
   return $exit_status
