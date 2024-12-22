@@ -1,12 +1,12 @@
 .netrwhist
 npm-debug.log
-config/nvim/spell
-config/nvim/shada
+zsh/.config/nvim/spell
+zsh/.config/nvim/shada
 vim/vim.symlink/spell/
 vim/vim.symlink/plugged/
 Brewfile.lock.json
 lazy-lock.json
 config/kitty/kitty-overrides.conf
-config/zsh/.zsh_history
-config/zsh/.zcompdump
-config/zsh/.zsh_sessions
+zsh/.config/zsh/.zsh_history
+zsh/.config/zsh/.zcompdump
+zsh/.config/zsh/.zsh_sessions

@@ -108,6 +108,7 @@ opt.wildmode = { "list", "longest" } -- complete files like a shell
 opt.shell = env.SHELL
 opt.cmdheight = vim.g.vscode and 1 or 0
 opt.title = true -- set terminal title
+-- opt.titlestring = "%{fnamemodify(getcwd(), ':t')}"
 opt.showmatch = true -- show matching braces
 opt.mat = 2 -- how many tenths of a second to blink
 opt.updatetime = 200 -- save swap file
