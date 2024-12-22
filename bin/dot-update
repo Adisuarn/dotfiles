@@ -1,0 +1,123 @@
+#!/usr/bin/env bash
+# Description: Update all the things
+
+set -Eeuo pipefail
+
+# source helpers
+source "$DOTFILES/bin/lib/common.sh"
+command_name=$(basename "${BASH_SOURCE[0]}")
+
+usage() {
+  cat <<EOF
+  $(fmt_key "Usage:") $(fmt_key "$command_name") $(fmt_value "[options] <command>")
+
+  Update all the things. This script can be used to update Neovim plugins,
+  update Homebrew packages, and more.
+
+Options:
+    -h, --help       Show this help message
+    nvim             Update Neovim plugins
+    vim              Alias for updating Neovim plugins
+EOF
+}
+
+# Get the lazy.nvim path based on XDG spec
+lazypath="$(echo "${XDG_DATA_HOME:-$HOME/.local/share}")/nvim/lazy/lazy.nvim"
+
+# Create a temporary lua file for headless update
+create_temp_lua() {
+  local temp_file=$(mktemp)
+  cat >"$temp_file" <<'EOL'
+-- Bootstrap lazy.nvim if needed
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+    print("lazy.nvim not installed")
+    vim.cmd("quit")
+    return
+end
+
+-- Add lazy.nvim to runtimepath
+vim.opt.rtp:prepend(lazypath)
+
+-- Load user config to get plugin specifications
+local config_path = vim.fn.stdpath("config")
+package.path = config_path .. "/lua/?.lua;" .. package.path
+local ok, err = pcall(require, "config.lazy")
+if not ok then
+    -- Try common alternative config paths
+    ok, err = pcall(require, "plugins")
+    if not ok then
+        ok, err = pcall(require, "lazy-plugins")
+        if not ok then
+            print("Could not load plugin config:", err)
+            vim.cmd("quit")
+            return
+        end
+    end
+end
+
+-- Perform the update
+require("lazy").sync({ show = false })
+
+-- Exit nvim after sync
+vim.defer_fn(function()
+    vim.cmd("quit")
+end, 100)
+EOL
+  echo "$temp_file"
+}
+
+# Main update function
+update_nvim_plugins() {
+  local temp_lua=$(create_temp_lua)
+  local log_file=$(mktemp)
+
+  # Use run_with_spinner helper with style 11 (complex braille pattern)
+  run_with_spinner "nvim --headless '+Lazy! sync' +qa > '$log_file' 2>&1" 11 "Updating Neovim plugins"
+
+  # Check for errors
+  if grep -q "Error\|ERROR\|Could not\|not installed" "$log_file"; then
+    echo "Error occurred during update:"
+    rm -f "$temp_lua" "$log_file"
+    exit 1
+  fi
+
+  # Cleanup temporary files
+  rm -f "$temp_lua" "$log_file"
+}
+
+main() {
+  local subcmd=""
+
+  if [ $# -lt 1 ]; then
+    usage
+    exit 0
+  fi
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      subcmd="$1"
+      shift
+      ;;
+    esac
+  done
+
+  case "$subcmd" in
+  nvim | vim)
+    update_nvim_plugins
+    ;;
+  *)
+    log_error "Unknown $command_name command: $subcmd"
+    echo -e
+    usage
+    exit 1
+    ;;
+  esac
+}
+
+main "$@"
