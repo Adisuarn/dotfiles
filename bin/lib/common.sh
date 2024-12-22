@@ -88,4 +88,88 @@ fmt_title_border() {
   printf "${BRIGHT_BLUE}${BOLD}└─%s─┘${RESET}\n" "$(printf '─%.0s' $(seq "$len"))"
 }
 
+# Enhanced spinner class with multiple style options and colors
+spinner() {
+  local pid=$1                 # Process ID to monitor
+  local style=${2:-1}          # Spinner style (default: 0)
+  local delay=0.1              # Animation delay
+  local msg="${3:-Working...}" # Custom message
+
+  local RAINBOW=("$RED" "$YELLOW" "$GREEN" "$CYAN" "$BLUE" "$MAGENTA")
+
+  # Different spinner styles
+  case $style in
+  1) local chars='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏' ;;     # Braille dots
+  2) local chars='▁▂▃▄▅▆▇█▇▆▅▄▃▂' ;; # Growing bars
+  3) local chars='←↖↑↗→↘↓↙' ;;       # Arrows
+  4) local chars='▉▊▋▌▍▎▏▎▍▌▋▊▉' ;;  # Thickness varying bar
+  5) local chars='▖▘▝▗' ;;           # Box corners
+  6) local chars='┤┘┴└├┌┬┐' ;;       # Box borders
+  7) local chars='◢◣◤◥' ;;           # Diamond parts
+  8) local chars='◰◳◲◱' ;;           # Box quadrants
+  9) local chars='◴◷◶◵' ;;           # Circle quadrants
+  10) local chars='◐◓◑◒' ;;          # Circle halves
+  11) local chars='⣾⣽⣻⢿⡿⣟⣯⣷' ;;      # Complex braille
+  12) local chars='•●○' ;;           # Growing circle
+  13) local chars='✶✸✹✺✹✸' ;;        # Spiky star
+  14) local chars='⠁⠂⠄⡀⢀⠠⠐⠈' ;;      # Growing braille
+  15) local chars='≈≋≋≈≈≋≋≈' ;;      # Waves
+  16) local chars='⌜⌝⌟⌞' ;;          # Corner pieces
+  17) local chars='◜◝◞◟' ;;          # Curved corners
+  18) local chars='⬖⬘⬗⬙' ;;          # Triangles
+  19) local chars='⏳⌛' ;;            # Hourglass
+  *) local chars='/-\|' ;;           # Default simple spinner
+  esac
+
+  # Hide cursor
+  tput civis
+
+  # Cleanup function to restore cursor and remove spinner
+  cleanup() {
+    tput cnorm # Restore cursor
+    tput el    # Clear line
+    echo -en "\r${RESET}"
+  }
+  trap cleanup EXIT SIGINT SIGTERM
+
+  # Main spinner loop with rainbow effect
+  local rainbow_index=0
+  while ps -p "$pid" &>/dev/null; do
+    for ((i = 0; i < ${#chars}; i++)); do
+      local color=${RAINBOW[$rainbow_index]}
+      echo -en "\r${color}${chars:$i:1}${RESET} ${msg}"
+      sleep $delay
+      rainbow_index=$(((rainbow_index + 1) % ${#RAINBOW[@]}))
+    done
+  done
+
+  cleanup
+}
+
+# Example of how to use in a real script
+run_with_spinner() {
+  local cmd="$1"   # Command to run
+  local style="$2" # Spinner style
+  local msg="$3"   # Custom message
+
+  # Run the command in background
+  eval "$cmd" &
+
+  # Start spinner
+  spinner $! "${style:-0}" "${msg:-Working...}"
+
+  # Wait for command to finish and get its exit status
+  wait $!
+  local exit_status=$?
+
+  echo -en "\r "
+  if [ $exit_status -eq 0 ]; then
+    echo -e "\n${GREEN}Success!${RESET}"
+  else
+    echo -e "\n${RED}Failed!${RESET}"
+  fi
+
+  return $exit_status
+}
+
 setup_colors
