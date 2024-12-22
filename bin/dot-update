@@ -20,6 +20,7 @@ Options:
     nvim, vim            Update Neovim plugins
     homebrew, brew       Update Homebrew packages
     dotfiles             Update dotfiles
+    zsh                  Update Zsh plugins
     all                  Update everything
 EOF
 }
@@ -100,6 +101,37 @@ update_dotfiles() {
   fi
 }
 
+update_zsh_plugins() {
+  fmt_title_underline "Updating ZSH plugins..."
+  echo -e
+
+  local cwd="$(pwd)"
+  while IFS=: read -r name path; do
+    # update logic here
+    cd "$path" || exit
+
+    local before=$(git rev-parse HEAD)
+
+    run_with_spinner 'git pull --quiet --recurse-submodules' 11 "Updating $name..."
+
+    # Check if anything changed
+    local after=$(git rev-parse HEAD)
+    if [[ $before != $after ]]; then
+      local commit_count=$(git rev-list --count "$before".."$after")
+      local commit_msg=$(git log -1 --pretty=format:"%s")
+      log_success "$name updated ($commit_count new commit(s))"
+      fmt_value "  → $commit_msg"
+    else
+      log_info "$name already up to date"
+    fi
+
+    cd "$cwd" || exit
+  done < <(zsh -ic 'for k in ${(k)plugins}; do echo "$k:$plugins[$k]"; done')
+
+  echo -e
+  log_success "ZSH Plugin updates completed."
+}
+
 main() {
   local subcmd=""
   local verbose=false
@@ -136,9 +168,13 @@ main() {
   dotfiles)
     update_dotfiles
     ;;
+  zsh)
+    update_zsh_plugins
+    ;;
   all)
     update_nvim_plugins
     update_homebrew
+    update_zsh_plugins
     update_dotfiles
     ;;
   *)
