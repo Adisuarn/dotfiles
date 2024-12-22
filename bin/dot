@@ -1,0 +1,192 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+trap cleanup SIGINT SIGTERM ERR EXIT
+
+cleanup() {
+  trap - SIGINT SIGTERM ERR EXIT
+  tput cnorm # enable cursor
+  # script cleanup here
+}
+
+command_name=$(basename "${BASH_SOURCE[0]}")
+script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
+STOW_DIR="$DOTFILES"
+# Directories to ignore when linking
+IGNORE_LIST=("bin" "applescripts" "resources")
+
+setup_colors() {
+  # Color definitions
+  if [[ -t 2 ]] && [[ -z "${NO_COLOR-}" ]] && [[ "${TERM-}" != "dumb" ]]; then
+    readonly RESET="\033[0m"
+    readonly BOLD="\033[1m"
+    readonly DIM="\033[2m"
+    readonly BLUE="\033[34m"
+    readonly GREEN="\033[32m"
+    readonly YELLOW="\033[33m"
+    readonly RED="\033[31m"
+  else
+    readonly RESET=""
+    readonly BOLD=""
+    readonly DIM=""
+    readonly BLUE=""
+    readonly GREEN=""
+    readonly YELLOW=""
+    readonly RED=""
+  fi
+}
+
+log_info() {
+  printf "${BLUE}${BOLD}INFO${RESET} %s\n" "$1"
+}
+
+log_success() {
+  printf "${GREEN}${BOLD}SUCCESS${RESET} %s\n" "$1"
+}
+
+log_warning() {
+  printf "${YELLOW}${BOLD}WARNING${RESET} %s\n" "$1"
+}
+
+log_error() {
+  printf "${RED}${BOLD}ERROR${RESET} %s\n" "$1" >&2
+}
+
+usage() {
+  cat <<EOF
+Usage: $command_name <command> [subcommand] [options]
+
+Dotfiles management script.
+
+Commands:
+    link                      Manage stow symlinks
+        all                   Link all
+        <pkg>                 Link a specific package
+    unlink                    Manage stow symlinks
+        all                   Unlink all
+        <pkg>                 Ulnlink a specific package
+EOF
+  exit
+}
+
+cmd_stow() {
+  local operation="$1"
+  local stow_flags="$2"
+  shift 2
+
+  local subcmd=""
+  local verbose=false
+  local target="$HOME"
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+    -v | --verbose)
+      verbose=true
+      shift
+      ;;
+    -t | --target)
+      if [[ -n "${2:-}" ]]; then
+        target="$2"
+        shift 2
+      else
+        log_error "Missing target directory"
+        exit 1
+      fi
+      ;;
+    -h | --help)
+      cat <<EOF
+Usage: $command_name ${operation} [options] <package>
+
+Options:
+    -v, --verbose    Show detailed output
+    -t, --target     Specify target directory (default: $HOME)
+    -h, --help       Show this help message
+    <package>        Package to link (or \"all\" for all packages)
+EOF
+      exit
+      ;;
+    *)
+      if [[ -z "$subcmd" ]]; then
+        subcmd="$1"
+      else
+        log_error "Unknown argument: $1"
+        exit 1
+      fi
+      shift
+      ;;
+    esac
+  done
+
+  [[ -z "$subcmd" ]] && subcmd="all"
+  local stow_opts=($stow_flags -d "$STOW_DIR" -t "$target")
+  [[ "$verbose" == true ]] && stow_opts+=(--verbose)
+
+  case "$subcmd" in
+  all)
+    log_info "${operation}ing all packages to $target..."
+    for pkg in "$STOW_DIR"/*; do
+      if [ -d "$pkg" ]; then
+        pkg_name=$(basename "$pkg")
+
+        skip=false
+        for ignored in "${IGNORE_LIST[@]}"; do
+          if [ "$pkg_name" == "$ignored" ]; then
+            skip=true
+            break
+          fi
+        done
+        [[ "$skip" == true ]] && continue
+
+        if stow "${stow_opts[@]}" "$pkg_name" 2>/dev/null; then
+          log_success "${operation}ed $pkg_name"
+        else
+          log_warning "Failed to ${operation} $pkg_name"
+        fi
+      fi
+    done
+    ;;
+  *)
+    if [ -d "$STOW_DIR/$subcmd" ]; then
+      log_info "Linking $subcmd to $target..."
+      if stow "${stow_opts[@]}" "$subcmd" 2>/dev/null; then
+        log_success "${operation}ed $subcmd"
+      else
+        log_warning "Failed to ${operation} $subcmd"
+      fi
+    else
+      log_error "Package $subcmd not found in $STOW_DIR"
+      exit 1
+    fi
+    ;;
+  esac
+}
+
+cmd_link() {
+  cmd_stow "link" "" "$@"
+}
+
+cmd_unlink() {
+  cmd_stow "unlink" "-D" "$@"
+}
+
+main() {
+  if [ $# -lt 1 ]; then
+    usage
+  fi
+
+  cmd="$1"
+  shift || true
+  subcmd="${1:-all}"
+
+  case "$cmd" in
+  "link")
+    cmd_link "$subcmd"
+    ;;
+  "unlink")
+    cmd_unlink "$subcmd"
+    ;;
+  esac
+}
+
+setup_colors
+main "$@"
