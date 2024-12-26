@@ -1,0 +1,149 @@
+#!/usr/bin/env bash
+# Description: Update all the things
+
+set -Eeuo pipefail
+
+# source helpers
+source "$DOTFILES/bin/lib/common.sh"
+command_name=$(basename "${BASH_SOURCE[0]}")
+CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+
+usage() {
+  cat <<EOF
+  $(fmt_key "Usage:") $(fmt_key "$command_name") $(fmt_value "[options] <command>")
+
+  Manage dotfiles symlinks
+
+Options:
+    -h, --help           Show this help message
+    -v, --verbose        Show verbose output
+    -u, --unlink         Remove links rather than creating them
+    all                  Link/unlink everything
+    <pkg>                Link/unlink a specific package
+EOF
+}
+
+handle_package() {
+  local pkg="$1"
+  local operation="$2"
+  local verbose="$3"
+
+  if [ "$pkg" = "all" ]; then
+    local title_text="$operation"ing" all packages"
+  else
+    local title_text="$operation"ing" package: $pkg"
+  fi
+
+  [ "$verbose" = true ] && log_info "$title_text"
+
+  if [ "$pkg" = "all" ]; then
+    # Handle all packages in config directory
+    for config in "$DOTFILES/config"/*; do
+      if [ -d "$config" ]; then
+        local target="$CONFIG_HOME/$(basename "$config")"
+        if [ "$operation" = "link" ]; then
+          if [ -e "$target" ]; then
+            [ "$verbose" = true ] && log_info "~${target#"$HOME"} already exists... Skipping."
+          else
+            [ "$verbose" = true ] && log_info "Creating symlink for $(basename "$config")"
+            ln -s "$config" "$target"
+          fi
+        else # unlink
+          if [ -L "$target" ]; then
+            [ "$verbose" = true ] && log_info "Removing symlink: $target"
+            rm "$target"
+          elif [ -e "$target" ]; then
+            [ "$verbose" = true ] && log_warning "Skipping \"$target\" because it is not a symlink"
+          fi
+        fi
+      fi
+    done
+
+    # Handle .zshenv special case
+    if [ "$operation" = "link" ]; then
+      if [ ! -e "$HOME/.zshenv" ]; then
+        [ "$verbose" = true ] && log_info "Creating symlink for .zshenv"
+        ln -s "$DOTFILES/config/zsh/.zshenv" "$HOME/.zshenv"
+      else
+        [ "$verbose" = true ] && log_info "~/.zshenv already exists... Skipping."
+      fi
+    else # unlink
+      if [ -L "$HOME/.zshenv" ]; then
+        [ "$verbose" = true ] && log_info "Removing symlink: $HOME/.zshenv"
+        rm "$HOME/.zshenv"
+      fi
+    fi
+  else
+    # Handle specific package
+    local target="$CONFIG_HOME/$pkg"
+    if [ -d "$DOTFILES/config/$pkg" ]; then
+      if [ "$operation" = "link" ]; then
+        if [ -e "$target" ]; then
+          [ "$verbose" = true ] && log_info "~${target#"$HOME"} already exists... Skipping."
+        else
+          [ "$verbose" = true ] && log_info "Creating symlink for $pkg"
+          ln -s "$DOTFILES/config/$pkg" "$target"
+        fi
+      else # unlink
+        if [ -L "$target" ]; then
+          [ "$verbose" = true ] && log_info "Removing symlink: $target"
+          rm "$target"
+        elif [ -e "$target" ]; then
+          [ "$verbose" = true ] && log_warning "Skipping \"$target\" because it is not a symlink"
+        fi
+      fi
+    else
+      log_error "Package $pkg not found in config directory"
+      return 1
+    fi
+  fi
+}
+
+main() {
+  local subcmd="link"
+  local verbose=false
+  local pkg="all"
+
+  if [ $# -lt 1 ]; then
+    usage
+    exit 0
+  fi
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    -u | --unlink)
+      subcmd="unlink"
+      shift
+      ;;
+    -v | --verbose)
+      verbose=true
+      shift
+      ;;
+    *)
+      pkg="$1"
+      shift
+      ;;
+    esac
+  done
+
+  case "$subcmd" in
+  link)
+    handle_package "$pkg" "link" "$verbose"
+    ;;
+  unlink)
+    handle_package "$pkg" "unlink" "$verbose"
+    ;;
+  *)
+    log_error "Failed to link unknown package: $pkg"
+    echo -e
+    usage
+    exit 1
+    ;;
+  esac
+}
+
+main "$@"
