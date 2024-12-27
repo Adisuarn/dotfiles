@@ -267,7 +267,7 @@ main() {
   backup)
     cmd_backup "$@"
     ;;
-  link)
+  xlink)
     cmd_link "$subcmd"
     ;;
   unlink)

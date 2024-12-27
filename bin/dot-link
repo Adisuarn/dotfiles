@@ -46,7 +46,7 @@ handle_package() {
             [ "$verbose" = true ] && log_info "~${target#"$HOME"} already exists... Skipping."
           else
             [ "$verbose" = true ] && log_info "Creating symlink for $(basename "$config")"
-            ln -s "$config" "$target"
+            ln -s "$DOTFILES/$config" "$target"
           fi
         else # unlink
           if [ -L "$target" ]; then
