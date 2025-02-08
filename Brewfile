@@ -8,18 +8,35 @@ if OS.mac?
   # taps
   brew "noti"                          # utility to display notifications from scripts
   brew "trash"                         # rm, but put in the trash rather than completely delete
-  brew "borders"                       # add borders to windows
+  brew "borders"
 
   # Applications
   cask "ghostty"                       # a better terminal emulator
-  cask "wezterm"                       # a better terminal emulator
   cask "1password/tap/1password-cli"   # 1Password CLI
+  cask "appcleaner"                    # App Cleaner
   cask "karabiner-elements"            # keyboard customizer
   cask "nikitabobko/tap/aerospace"     # a tiling window manager
+  cask "gitkraken"
+  cask "goland"
+  cask "intellij-idea"
+  cask "rustrover"
+  cask "visual-studio-code"
+  cask "keka"
+  cask "kekaexternalhelper"
+  cask "obsidian"
+  cask "alt-tab"
+  cask "raycast"
+  cask "hiddenbar"
+  cask "spotify"
+  cask "zen-browser"
+  cask "discord"
+  cask "ubersicht"
 
   # Fonts
   cask "font-symbols-only-nerd-font"   # nerd-only symbols font
   cask "font-monaspace"                # Preferred monospace font
+  cask "font-geist-mono-nerd-font"
+  cask "font-geist-mono"
 elsif OS.linux?
   brew "xclip"                         # access to clipboard (similar to pbcopy/pbpaste)
 end
@@ -45,7 +62,7 @@ brew "git-delta"                       # a better git diff
 brew "glow"                            # markdown viewer
 brew "gnupg"                           # GPG
 brew "highlight"                       # code syntax highlighting
-brew "btop"                            # a top alternative
+brew "macmon"                            # a top alternative
 brew "jq"                              # work with JSON files in shell scripts
 brew "lazygit"                         # a better git UI
 brew "neovim"                          # A better vim
@@ -58,3 +75,11 @@ brew "tree"                            # pretty-print directory contents
 brew "wdiff"                           # word differences in text files
 brew "wget"                            # internet file retriever
 brew "zoxide"                          # switch between most used directories
+brew "nvm"                             # node version manager
+brew "pnpm"                            # pnpm
+brew "go"                              # go
+brew "rust"                            # rust
+brew "git-flow"
+
+tap "oven-sh/bun"
+brew "bun"                             # bun

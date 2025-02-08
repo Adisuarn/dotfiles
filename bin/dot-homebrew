@@ -64,6 +64,14 @@ homebrew_bundle() {
 
   log_success "Homebrew packages installed successfully."
 
+  if [ "$(uname)" == "Darwin" ]; then
+    log_info "Installing simple-bar widget for Übersicht"
+    git clone https://github.com/Jean-Tinland/simple-bar "$HOME/Library/Application Support/Übersicht/widgets/simple-bar"
+  fi
+
+  log_info "Installing Tmux Plugin Manager"
+  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
   # install fzf
   echo -e
   log_info "Installing fzf"

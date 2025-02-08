@@ -1,7 +1,11 @@
--- init.lua
--- Neovim-specific configuration
+require('config.EcoVim')
 
--- Use the nisi config
+require('utils.globals')
+require('utils.functions')
 
-local nisi = require("nisi")
-nisi.setup()
+require('config.options')
+require('config.lazy')
+require('config.keymappings')
+require('config.autocmds')
+
+require('internal.cursorword')

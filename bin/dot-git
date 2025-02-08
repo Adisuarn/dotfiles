@@ -4,6 +4,7 @@
 set -Eeuo pipefail
 
 # source helpers
+DOTFILES="$HOME/dev/dotfiles"
 source "$DOTFILES/bin/lib/common.sh"
 command_name=$(basename "${BASH_SOURCE[0]}")
 
@@ -32,7 +33,7 @@ setup_git() {
   local_config="$HOME/.gitconfig-local"
 
   defaultName=$(git config user.name)
-  defaultEmail=$(git config user.email)
+  defaultEmail=(git config user.email)
   defaultGithub=$(git config github.user)
 
   read -rp "Name [$defaultName] " name
@@ -44,15 +45,17 @@ setup_git() {
   git config -f "$local_config" github.user "${github:-$defaultGithub}"
 
   if [[ "$(uname)" == "Darwin" ]]; then
-    git config -f "$local_config" credential.helper "osxkeychain"
+    git config --global credential.helper "osxkeychain"
   else
     read -rn 1 -p "Save user and password to an unencrypted file to avoid writing? [y/N] " save
     if [[ $save =~ ^([Yy])$ ]]; then
-      git config -f "$local_config" credential.helper "store"
+      git config --global credential.helper "store"
     else
-      git config -f "$local_config" credential.helper "cache --timeout 3600"
+      git config --global credential.helper "cache --timeout 3600"
     fi
   fi
+
+  echo "Git configuration saved"
 }
 
 main() {

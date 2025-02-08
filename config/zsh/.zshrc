@@ -17,10 +17,10 @@ prepend_path $HOME/bin
 
 # define the code directory
 # This is where my code exists and where I want the `c` autocomplete to work from exclusively
-if [[ -d ~/code ]]; then
+if [[ -d ~/dev ]]; then
+    export CODE_DIR=~/dev
+elif [[ -d ~/code ]]; then
     export CODE_DIR=~/code
-elif [[ -d ~/Developer ]]; then
-    export CODE_DIR=~/Developer
 fi
 
 # display how long all tasks over 10 seconds take
@@ -169,3 +169,5 @@ if [[ -x "$(command -v pyenv)" ]]; then
   [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
   eval "$(pyenv init -)"
 fi
+
+export PATH=$PATH:/Users/adisuarn/.spicetify
