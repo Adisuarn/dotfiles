@@ -23,7 +23,6 @@ brew analytics off
 
 ## Taps
 echo "Tapping Brew..."
-brew tap homebrew/cask-fonts
 brew tap FelixKratz/formulae
 
 ## Formulae
@@ -85,13 +84,14 @@ brew install --cask hiddenbar
 brew install --cask itsycal
 brew install --cask zen-browser
 brew install --cask vesktop
-brew install --cask zed@preview
+brew install --cask visual-studio-code
 brew install --cask karabiner-elements
 brew install --cask nikitabobko/tap/aerospace
 brew install --cask betterdisplay
 brew install --cask linearmouse
-brew install --cask "font-geist-mono"
-brew install --cask "font-geist-mono-nerd-font"
+brew install --cask font-geist-mono
+brew install --cask font-sf-pro
+brew install --cask font-geist-mono-nerd-font
 brew install --cask font-jetbrains-mono-nerd-font
 
 ## MacOS settings
@@ -117,6 +117,6 @@ cd $HOME/dotfiles || exit
 
 # Stow dotfiles packages
 echo "Stowing dotfiles..."
-stow -t ~ aerospace karabiner starship zsh atuin sketchybar ghostty
+stow -t ~ aerospace karabiner starship zsh atuin scripts ghostty
 
 echo "Dotfiles setup complete!"

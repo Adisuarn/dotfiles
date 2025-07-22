@@ -13,14 +13,14 @@ after-login-command = []
 # 'after-startup-command' is run after 'after-login-command'
 # Available commands : https://nikitabobko.github.io/AeroSpace/commands
 after-startup-command = [
-    # 'exec-and-forget sketchybar',
-    # 'exec-and-forget borders active_color=Oxffele3e4 inactive_color=0xff494d64 width=3.0'
+    #'exec-and-forget sketchybar',
+    'exec-and-forget borders active_color=Oxffele3e4 inactive_color=0xff494d64 width=3.0'
 ]
 
 # Notify Sketchybar about workspace change
-# exec-on-workspace-change = ['/bin/bash', '-c',
-#     'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE'
-# ]
+exec-on-workspace-change = ['/bin/bash', '-c',
+     #'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE'
+]
 
 # Start AeroSpace at login
 start-at-login = true
@@ -123,7 +123,7 @@ alt-4 = 'workspace 4'
 alt-8 = 'workspace 8'
 alt-9 = 'workspace 9'
 alt-b = 'workspace B' # for browser
-# alt-e = 'workspace E' # 
+# alt-e = 'workspace E' #
 alt-f = 'workspace F' # for finder
 alt-m = 'workspace M' #
 alt-n = 'workspace N' # for notes
@@ -205,10 +205,8 @@ if.app-id = 'com.mitchellh.ghostty'
 run = "move-node-to-workspace T"
 
 [[on-window-detected]]
-if.app-id = 'dev.zed.Zed-Preview'
+if.app-id = 'com.microsoft.VSCode'
 run = "move-node-to-workspace 1"
-
-[[on-window-detected]]
 
 ## Browsers
 
