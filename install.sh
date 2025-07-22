@@ -80,6 +80,7 @@ brew install --cask rustrover
 brew install --cask keka
 brew install --cask kekaexternalhelper
 brew install --cask alt-tab
+brew install --cask spotify
 brew install --cask hiddenbar
 brew install --cask itsycal
 brew install --cask zen-browser
