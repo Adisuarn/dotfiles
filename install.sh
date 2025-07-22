@@ -55,6 +55,7 @@ brew install git
 brew install starship
 brew install tree-sitter
 brew install tree
+brew install macmon
 brew install borders
 
 ### dev things
