@@ -1,12 +1,4 @@
-# Place a copy of this config to ~/.aerospace.toml
-# After that, you can edit ~/.aerospace.toml to your liking
-
-# It's not necessary to copy all keys to your config.
-# If the key is missing in your config, "default-config.toml" will serve as a fallback
-
-# You can use it to add commands that run after login to macOS user session.
-# 'start-at-login' needs to be 'true' for 'after-login-command' to work
-# Available commands: https://nikitabobko.github.io/AeroSpace/commands
+config-version = 2
 after-login-command = []
 
 # You can use it to add commands that run after AeroSpace startup.
@@ -14,7 +6,7 @@ after-login-command = []
 # Available commands : https://nikitabobko.github.io/AeroSpace/commands
 after-startup-command = [
     #'exec-and-forget sketchybar',
-    'exec-and-forget borders active_color=Oxffele3e4 inactive_color=0xff494d64 width=3.0'
+    # 'exec-and-forget borders active_color=Oxffele3e4 inactive_color=0xff494d64 width=3.0'
 ]
 
 # Notify Sketchybar about workspace change
@@ -51,7 +43,22 @@ key-mapping.preset = 'qwerty'
 # See https://nikitabobko.github.io/AeroSpace/guide#on-focus-changed-callbacks
 # See https://nikitabobko.github.io/AeroSpace/commands#move-mouse
 # on-focus-changed = "move-mouse window-lazy-center"
-# on-focused-monitor-changed = ['move-mouse monitor-lazy-center'] # switchin dislays mouse re center
+on-focused-monitor-changed = ['move-mouse monitor-lazy-center'] # switchin dislays mouse re center
+
+persistent-workspaces = [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "8",
+    "9",
+    "B",
+    "F",
+    "M",
+    "N",
+    "T"
+]
 
 # Gaps between windows (inner-*) and between monitor edges (outer-*).
 # Possible values:
@@ -68,8 +75,7 @@ outer.bottom =     30
 # outer.top =        40
 outer.right =      30
 # --------------------- Benq default = 45
-outer.top = [{ monitor."BenQ EX2510S" = 30 }, { monitor."Built-in Retina Display" = 10 }, 40]
-
+outer.top = [{ monitor."M27UP" = 20 }, { monitor."Built-in Retina Display" = 10 }, 40]
 
 # 'main' binding mode declaration
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
@@ -117,7 +123,7 @@ alt-1 = 'workspace 1'
 alt-2 = 'workspace 2'
 alt-3 = 'workspace 3'
 alt-4 = 'workspace 4'
-# alt-5 = 'workspace 5'
+alt-5 = 'workspace 5'
 # alt-6 = 'workspace 6'
 # alt-7 = 'workspace 7'
 alt-8 = 'workspace 8'
@@ -136,7 +142,7 @@ alt-shift-1 = 'move-node-to-workspace 1'
 alt-shift-2 = 'move-node-to-workspace 2'
 alt-shift-3 = 'move-node-to-workspace 3'
 alt-shift-4 = 'move-node-to-workspace 4'
-# alt-shift-5 = 'move-node-to-workspace 5'
+alt-shift-5 = 'move-node-to-workspace 5'
 # alt-shift-6 = 'move-node-to-workspace 6'
 # alt-shift-7 = 'move-node-to-workspace 7'
 alt-shift-8 = 'move-node-to-workspace 8'
@@ -196,7 +202,7 @@ alt-shift-l = ['join-with right', 'mode main']
 
 [[on-window-detected]]
 if.app-id = 'com.apple.finder'
-run = "move-node-to-workspace F"
+run = ['layout floating', 'move-node-to-workspace F']
 
 ## Development
 
@@ -237,14 +243,6 @@ if.app-id = 'md.obsidian'
 run = "move-node-to-workspace N"
 
 ## Floaters
-
-[[on-window-detected]]
-if.app-id = 'com.apple.finder'
-run = 'layout floating'
-
-[[on-window-detected]]
-if.app-id = 'net.freemacsoft.AppCleaner'
-run = 'layout floating'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.ScreenContinuity'
