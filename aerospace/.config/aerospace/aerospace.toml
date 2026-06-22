@@ -211,8 +211,13 @@ if.app-id = 'com.mitchellh.ghostty'
 run = "move-node-to-workspace T"
 
 [[on-window-detected]]
-if.app-id = 'com.microsoft.VSCode'
+if.app-id = 'com.todesktop.230313mzl4w4u92'
 run = "move-node-to-workspace 1"
+
+[[on-window-detected]]
+if.app-id = 'com.firstversionist.polypane'
+run = "move-node-to-workspace 3"
+
 
 ## Browsers
 
@@ -249,6 +254,10 @@ if.app-id = 'com.apple.ScreenContinuity'
 run = 'layout floating'
 
 [[on-window-detected]]
+if.app-id = 'dev.vencord.vesktop'
+run = "layout floating"
+
+[[on-window-detected]]
 if.app-id = 'jp.naver.line.mac'
 run = 'layout floating'
 
@@ -257,13 +266,5 @@ if.app-id = 'com.apple.AppStore'
 run = 'layout floating'
 
 [[on-window-detected]]
-if.app-id = 'com.apple.iCal'
-run = 'layout floating'
-
-[[on-window-detected]]
 if.app-id = 'com.spotify.client'
-run = 'layout floating'
-
-[[on-window-detected]]
-if.app-id = 'com.axosoft.gitkraken'
 run = 'layout floating'
