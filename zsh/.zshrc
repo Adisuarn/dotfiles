@@ -1,6 +1,6 @@
 # ====================== Environment & PATH ======================
 typeset -U PATH
-export PATH="/Users/personal/.local/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
 
 # oh-my-zsh
 export ZSH="$HOME/.oh-my-zsh"
@@ -22,11 +22,11 @@ source $ZSH/oh-my-zsh.sh
 # bindkey -r '^['
 
 # ====================== Extra Completions ======================
-[ -s "/Users/personal/.bun/_bun" ] && source "/Users/personal/.bun/_bun"
+[ -s "/Users/emmu/.bun/_bun" ] && source "/Users/emmu/.bun/_bun"
 
 #============ Editors ===========
-export EDITOR=vscode
-export VISUAL=vscode
+export EDITOR=cursor
+export VISUAL=cursor
 
 # ctrl y accept requires zsh-autosuggestions to be active
 # bindkey -M viins '^Y' autosuggest-accept 
@@ -42,11 +42,6 @@ eval "$(starship init zsh)"
 
 eval "$(zoxide init zsh)" # zoxide
 
-# Atuin configs
-export ATUIN_NOBIND="true"
-eval "$(atuin init zsh)"
-bindkey '^r' atuin-search-viins
-
 
 # ================= ALIAS ===================
 # For Running Go Server using Air
@@ -56,9 +51,6 @@ alias air='$(go env GOPATH)/bin/air'
 alias c="clear"
 alias e="exit"
 alias ff="fastfetch"
-
-# opens documentation through fzf (eg: git,zsh etc.)
-alias fman="compgen -c | fzf | xargs man"
 
 # Next level ls (options:  --no-filesize --no-time --no-permissions)
 alias ls="eza --no-filesize --long --color=always --icons=always --no-user" 
@@ -78,10 +70,15 @@ alias gc='git commit -m'
 alias glog='git log --oneline --graph --all'
 alias gh-create='gh repo create --private --source=. --remote=origin && git push -u --all && gh browse'
 
-alias nvim-scratch="NVIM_APPNAME=nvim-scratch nvim"
-alias nvimn="NVIM_APPNAME=nvim-nightly $HOME/.local/nvim-nightly/bin/nvim"
-alias nvimmin="NVIM_APPNAME=nvim-min nvim"
-alias nvimpack="NVIM_APPNAME=nvim-pack nvim"
-
-# lazygit
-alias lg="lazygit"
+# >>> headroom persistent env >>>
+export HEADROOM_PORT="8787"
+export HEADROOM_HOST="127.0.0.1"
+export HEADROOM_MODE="token"
+export HEADROOM_BACKEND="anthropic"
+export HEADROOM_TELEMETRY="off"
+export ANTHROPIC_BASE_URL="http://127.0.0.1:8787"
+export ENABLE_TOOL_SEARCH="true"
+export COPILOT_PROVIDER_TYPE="anthropic"
+export COPILOT_PROVIDER_BASE_URL="http://127.0.0.1:8787"
+export OPENAI_BASE_URL="http://127.0.0.1:8787/v1"
+# <<< headroom persistent env <<<

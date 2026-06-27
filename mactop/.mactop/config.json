@@ -1,6 +1,9 @@
 {
   "default_layout": "alternative",
-  "sort_reverse": false,
+  "theme": "green",
+  "background": "mocha-base",
+  "sort_column": 5,
+  "sort_reverse": true,
   "custom_theme": {
     "foreground": "#e0def4",
     "cpu": "#eb6f92",

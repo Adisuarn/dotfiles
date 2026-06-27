@@ -55,22 +55,20 @@ brew install coreutils
 ### Must Have things
 brew install zsh-autosuggestions
 brew install zsh-syntax-highlighting
-brew install atuin
-brew install sketchybar
 brew install stow
 brew install fzf
 brew install bat
 brew install fd
 brew install zoxide
 brew install lua
-brew install eza
-brew install fastfetch
 brew install luajit
 brew install luarocks
 brew install prettier
 brew install make
 brew install qmk
 brew install ripgrep
+brew install eza
+brew install sketchybar
 
 ### Terminal
 brew install git
@@ -79,44 +77,38 @@ brew install tree-sitter
 brew install tree
 brew install mactop
 brew install borders
+brew install fastfetch
 
 ### dev things
 brew install node
+brew install nvm
 brew install yarn
 brew install pnpm
-brew install nvm
-brew install rust
-brew install biome
-brew install lazygit
-brew install go
-brew install bottom
-brew install python
-brew install git-flow
 brew install oven-sh/bun/bun
 brew install sqlite
+brew install rust
+brew install biome
+brew install go
+brew install python@3.14
+brew install pipx
 
 ## Casks
 echo "Brew Installing --cask..."
 brew install --cask raycast
 brew install --cask ghostty
-brew install --cask gitkraken
-brew install --cask goland
-brew install --cask rustrover
 brew install --cask keka
 brew install --cask kekaexternalhelper
 brew install --cask alt-tab
 brew install --cask spotify
-brew install --cask hiddenbar
-brew install --cask itsycal
 brew install --cask zen-browser
 brew install --cask vesktop
-brew install --cask visual-studio-code
+brew install --cask cursor
+brew install --cask claude-code
 brew install --cask karabiner-elements
 brew install --cask nikitabobko/tap/aerospace
 brew install --cask betterdisplay
 brew install --cask linearmousbe
 brew install --cask font-geist-mono
-brew install --cask font-sf-pro
 brew install --cask font-geist-mono-nerd-font
 brew install --cask font-jetbrains-mono-nerd-font
 
@@ -133,7 +125,7 @@ echo "Installation complete..."
 # Clone dotfiles repository
 if [[ ! -d "$HOME/dotfiles" ]]; then
     echo "Cloning dotfiles repository..."
-    git clone https://github.com/Sin-cy/dotfiles.git "$HOME/dotfiles"
+    git clone https://github.com/Adisuarn/dotfiles.git "$HOME/dotfiles"
 else
     echo "✅ Dotfiles already cloned, pulling latest..."
     cd "$HOME/dotfiles" && git pull
@@ -147,7 +139,6 @@ echo "Stowing dotfiles..."
 cd $HOME/dotfiles || exit
 
 # Stow dotfiles packages
-echo "Stowing dotfiles..."
-stow -R -t ~ aerospace mactop karabiner starship zsh atuin ghostty
+stow -R -t ~ aerospace atuin fastfetch ghostty karabiner mactop sketchybar starship zsh
 
 echo "Dotfiles setup complete!"

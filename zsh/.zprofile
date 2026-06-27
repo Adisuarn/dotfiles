@@ -24,7 +24,8 @@ export NVM_DIR="$HOME/.nvm"
 
 # bun
 # bun completions
-[ -s "/Users/personal/.bun/_bun" ] && source "/Users/personal/.bun/_bun"
+[ -s "/Users/emmu/.bun/_bun" ] && source "/Users/emmu/.bun/_bun"
+
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
