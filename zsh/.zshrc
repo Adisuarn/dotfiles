@@ -69,16 +69,3 @@ alias gs="git status -s"
 alias gc='git commit -m'
 alias glog='git log --oneline --graph --all'
 alias gh-create='gh repo create --private --source=. --remote=origin && git push -u --all && gh browse'
-
-# >>> headroom persistent env >>>
-export HEADROOM_PORT="8787"
-export HEADROOM_HOST="127.0.0.1"
-export HEADROOM_MODE="token"
-export HEADROOM_BACKEND="anthropic"
-export HEADROOM_TELEMETRY="off"
-export ANTHROPIC_BASE_URL="http://127.0.0.1:8787"
-export ENABLE_TOOL_SEARCH="true"
-export COPILOT_PROVIDER_TYPE="anthropic"
-export COPILOT_PROVIDER_BASE_URL="http://127.0.0.1:8787"
-export OPENAI_BASE_URL="http://127.0.0.1:8787/v1"
-# <<< headroom persistent env <<<
