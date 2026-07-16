@@ -103,7 +103,6 @@ brew install --cask spotify
 brew install --cask zen-browser
 brew install --cask vesktop
 brew install --cask cursor
-brew install --cask claude-code
 brew install --cask karabiner-elements
 brew install --cask nikitabobko/tap/aerospace
 brew install --cask betterdisplay
