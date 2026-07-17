@@ -74,6 +74,7 @@ brew install fastfetch
 ### dev things
 brew install node
 brew install nvm
+brew install gh
 brew install yarn
 brew install pnpm
 brew install oven-sh/bun/bun
