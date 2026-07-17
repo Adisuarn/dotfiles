@@ -269,5 +269,5 @@ if.app-id = 'com.apple.AppStore'
 run = 'layout floating'
 
 [[on-window-detected]]
-if.app-id = 'com.spotify.client'
+if.app-id = 'com.github.th-ch.youtube-music'
 run = 'layout floating'

@@ -56,25 +56,17 @@ brew install coreutils
 brew install zsh-autosuggestions
 brew install zsh-syntax-highlighting
 brew install stow
-brew install fzf
-brew install bat
-brew install fd
 brew install zoxide
 brew install lua
-brew install luajit
-brew install luarocks
-brew install prettier
 brew install make
-brew install qmk
-brew install ripgrep
 brew install eza
 brew install sketchybar
+brew install switchaudio-osx
+brew install pear-devs/pear/pear-desktop
 
 ### Terminal
 brew install git
 brew install starship
-brew install tree-sitter
-brew install tree
 brew install mactop
 brew install borders
 brew install fastfetch
@@ -89,8 +81,7 @@ brew install sqlite
 brew install rust
 brew install biome
 brew install go
-brew install python@3.14
-brew install pipx
+brew install python
 
 ## Casks
 echo "Brew Installing --cask..."
@@ -99,16 +90,18 @@ brew install --cask ghostty
 brew install --cask keka
 brew install --cask kekaexternalhelper
 brew install --cask alt-tab
-brew install --cask spotify
 brew install --cask zen-browser
 brew install --cask vesktop
 brew install --cask cursor
 brew install --cask karabiner-elements
 brew install --cask nikitabobko/tap/aerospace
-brew install --cask betterdisplay
-brew install --cask linearmousbe
-brew install --cask font-geist-mono
-brew install --cask font-geist-mono-nerd-font
+brew install --cask appcleaner
+brew install --cask figma
+brew install --cask codex
+brew install --cask claude-code
+brew install --cask ngrok
+brew install --cask chatgpt
+brew install --cask TheBoredTeam/boring-notch/boring-notch
 brew install --cask font-jetbrains-mono-nerd-font
 
 ## MacOS settings
@@ -124,7 +117,7 @@ echo "Installation complete..."
 # Clone dotfiles repository
 if [[ ! -d "$HOME/dotfiles" ]]; then
     echo "Cloning dotfiles repository..."
-    git clone https://github.com/Adisuarn/dotfiles.git "$HOME/dotfiles"
+    git clone https://github.com/Adisurn/dotfiles.git "$HOME/dotfiles"
 else
     echo "✅ Dotfiles already cloned, pulling latest..."
     cd "$HOME/dotfiles" && git pull
@@ -138,6 +131,9 @@ echo "Stowing dotfiles..."
 cd $HOME/dotfiles || exit
 
 # Stow dotfiles packages
-stow -R -t ~ aerospace atuin fastfetch ghostty karabiner mactop sketchybar starship zsh
+stow -R -t ~ aerospace fastfetch ghostty karabiner mactop sketchybar starship zsh
+
+brew services start sketchybar
+brew services start borders
 
 echo "Dotfiles setup complete!"
