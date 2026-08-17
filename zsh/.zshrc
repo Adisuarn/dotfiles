@@ -42,6 +42,8 @@ eval "$(starship init zsh)"
 
 eval "$(zoxide init zsh)" # zoxide
 
+eval "$(pyenv init -)" # python env
+
 # ================= ALIAS ===================
 # For Running Go Server using Air
 alias air='$(go env GOPATH)/bin/air'
