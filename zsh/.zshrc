@@ -13,7 +13,7 @@ fpath=(~/.zsh/completions $fpath)
 # path on mac : ~/.oh-my-zsh/custom/plugins/
 # then run git clone <link in the to plugin repo>
 plugins=(
-    git 
+    git
     zsh-syntax-highlighting
     zsh-autosuggestions
 )
@@ -29,7 +29,7 @@ export EDITOR=cursor
 export VISUAL=cursor
 
 # ctrl y accept requires zsh-autosuggestions to be active
-# bindkey -M viins '^Y' autosuggest-accept 
+# bindkey -M viins '^Y' autosuggest-accept
 
 # bindkey -M viins '^P' up-line-or-beginning-search
 # bindkey -M viins '^N' down-line-or-beginning-search
@@ -37,7 +37,7 @@ export VISUAL=cursor
 # ================ Initializers and Sources ==============
 eval "$(gdircolors)"
 
-# starship 
+# starship
 eval "$(starship init zsh)"
 
 eval "$(zoxide init zsh)" # zoxide
@@ -54,7 +54,7 @@ alias e="exit"
 alias ff="fastfetch"
 
 # Next level ls (options:  --no-filesize --no-time --no-permissions)
-alias ls="eza --no-filesize --long --color=always --icons=always --no-user" 
+alias ls="eza --no-filesize --long --color=always --icons=always --no-user"
 
 # git aliases
 alias gt="git"
@@ -63,10 +63,3 @@ alias gs="git status -s"
 alias gc='git commit -m'
 alias glog='git log --oneline --graph --all'
 alias gh-create='gh repo create --private --source=. --remote=origin && git push -u --all && gh browse'
-
-# ================= INITIAL ===================
-if [ -z "$TMUX" ]; then
-    sleep 0.1
-    fastfetch
-fi
-
