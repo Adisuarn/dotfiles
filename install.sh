@@ -42,6 +42,8 @@ brew update
 echo "Tapping Brew..."
 brew tap homebrew/cask-fonts
 brew tap FelixKratz/formulae
+brew tap th0jensen/fff-gpui
+brew install fff-gpui
 brew install satococoa/tap/wtp
 brew install anomalyco/tap/opencode
 
