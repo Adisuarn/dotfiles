@@ -4,6 +4,7 @@ config/nvim/spell
 config/nvim/shada
 vim/vim.symlink/spell/
 vim/vim.symlink/plugged/
+mactop/.mactop/mactop.log
 Brewfile.lock.json
 lazy-lock.json
 config/kitty/kitty-overrides.conf

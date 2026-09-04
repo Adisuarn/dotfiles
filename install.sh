@@ -72,6 +72,7 @@ brew install starship
 brew install mactop
 brew install borders
 brew install fastfetch
+brew install gh
 
 ### dev things
 brew install node
@@ -96,15 +97,18 @@ brew install --cask alt-tab
 brew install --cask zen-browser
 brew install --cask vesktop
 brew install --cask cursor
+brew install --cask zed@preview
 brew install --cask karabiner-elements
 brew install --cask nikitabobko/tap/aerospace
 brew install --cask appcleaner
 brew install --cask figma
 brew install --cask codex
 brew install --cask claude-code
-brew install --cask ngrok
 brew install --cask chatgpt
+brew install --cask ngrok
 brew install --cask TheBoredTeam/boring-notch/boring-notch
+
+## Fonts
 brew install --cask font-jetbrains-mono-nerd-font
 
 ## MacOS settings
@@ -134,7 +138,7 @@ echo "Stowing dotfiles..."
 cd $HOME/dotfiles || exit
 
 # Stow dotfiles packages
-stow -R -t ~ aerospace fastfetch ghostty karabiner mactop sketchybar starship zsh
+stow -R -t ~ aerospace fastfetch ghostty karabiner mactop sketchybar starship zsh git
 
 brew services start sketchybar
 brew services start borders
