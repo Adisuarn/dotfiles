@@ -106,6 +106,7 @@ brew install --cask codex
 brew install --cask claude-code
 brew install --cask chatgpt
 brew install --cask ngrok
+brew install --cask linearmouse
 brew install --cask TheBoredTeam/boring-notch/boring-notch
 
 ## Fonts

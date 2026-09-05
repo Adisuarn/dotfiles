@@ -37,6 +37,9 @@ eval "$(zoxide init zsh)" # zoxide
 
 eval "$(pyenv init -)" # python env
 
+# Vite+ bin (https://viteplus.dev)
+. "$HOME/.config/vite-plus/env"
+
 # ================= ALIAS ===================
 # For Running Go Server using Air
 alias air='$(go env GOPATH)/bin/air'
